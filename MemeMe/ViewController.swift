@@ -46,21 +46,21 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         topTextField.text = "TOP"
         bottomTextField.text = "BOTTOM"
         
+        configureTextFields(textField: topTextField)
+        configureTextFields(textField: bottomTextField)
+    }
+    
+    func configureTextFields(textField : UITextField) {
         let memeTextAttributes = [
             NSStrokeColorAttributeName: UIColor.black,
             NSForegroundColorAttributeName: UIColor.white,
             NSFontAttributeName: UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
             NSStrokeWidthAttributeName: NSNumber(value: -3.0),
-        ]
+            ]
         
-        topTextField.defaultTextAttributes = memeTextAttributes
-        bottomTextField.defaultTextAttributes = memeTextAttributes
-        
-        topTextField.delegate = self
-        bottomTextField.delegate = self
-        
-        topTextField.textAlignment = .center
-        bottomTextField.textAlignment = .center
+        textField.defaultTextAttributes = memeTextAttributes
+        textField.delegate = self
+        textField.textAlignment = .center
     }
     
     func subscribeToKeyboardNotifications() {
@@ -74,7 +74,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     func keyboardWillShow(_ notification:Notification) {
-        view.frame.origin.y -= getKeyboardHeight(notification)
+        if(bottomTextField.isFirstResponder) {
+            view.frame.origin.y -= getKeyboardHeight(notification)
+        }
     }
     
     func keyboardWillHide(_ notification:Notification) {
@@ -88,19 +90,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
 
     @IBAction func pickImagePhotoLibraryAction(_ sender: UIBarButtonItem) {
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
-        imagePicker.sourceType = UIImagePickerControllerSourceType.photoLibrary
-        self.present(imagePicker, animated: true, completion: nil)
-        
+        pickImageFromSource(source: UIImagePickerControllerSourceType.photoLibrary)
     }
     
     @IBAction func pickImageCameraAction(_ sender: UIBarButtonItem) {
+        pickImageFromSource(source: UIImagePickerControllerSourceType.camera)
+    }
+    
+    func pickImageFromSource(source : UIImagePickerControllerSourceType) {
         let imagePicker = UIImagePickerController()
         imagePicker.delegate = self
-        imagePicker.sourceType = UIImagePickerControllerSourceType.camera
+        imagePicker.sourceType = source
         self.present(imagePicker, animated: true, completion: nil)
-        
     }
     
     @IBAction func shareButtonAction(_ sender: UIBarButtonItem) {
